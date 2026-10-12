@@ -13,6 +13,33 @@ follows Keep a Changelog; versions track `internal/version/version.go`.
   or certificate-less file is refused at start, with a message naming it,
   instead of failing the TLS handshake later.
 
+## [0.17.0] - 2026-10-12
+
+### Changed
+
+- go-hamqtt 0.37.0 -> 0.38.0, with `publisher.Config.SupersedeObserved` on.
+  A per-entity discovery config that the device document replaced is now
+  retracted only where the broker still retains one: the first document on
+  each connection takes one short snapshot of the discovery prefix (about
+  two seconds) and clears what it finds. Before, every connection sent one
+  empty retained message per entity whether or not anything was there, and
+  Home Assistant logged each as `Received a conflicting MQTT discovery
+  message` — 79 WARNING lines per restart for three appliances, measured
+  2026-10-12, long after the migration had finished. No entity, name or
+  history changes; an installation still holding per-entity configs is
+  migrated exactly as before.
+
+## [0.16.0] - 2026-10-12
+
+### Changed
+
+- go-hamqtt 0.36.0 -> 0.37.0. The release adds scoped validation findings
+  (`discovery.Inspect`), component containment (`discovery.Contain`,
+  `publisher.Config.Contain`) and `InstanceConfig.ExtraFunc`. This bridge
+  already withholds only the failing components of a device document
+  (omitted, never tombstoned) with its own gate, so no behaviour changes and
+  no re-publish is expected.
+
 ### Security
 
 - Built with Go 1.27.2, which fixes Go standard-library vulnerabilities
